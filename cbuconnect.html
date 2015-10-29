@@ -1,0 +1,292 @@
+<html>
+
+
+	<head>
+		<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+		<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+
+
+		
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap-responsive.min.css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+		
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+		
+
+   	   <link type="text/css" rel="stylesheet" href="cbuconnect.css">
+   	   	
+	</head>
+
+
+		<title>CBU Connect</title>
+
+    
+          <div id="header">
+            <div class="row6">
+             <div class="col-md-10">
+            <h1>CBU<br>
+             Connects </h1>
+            </div>
+
+            <div class="col-md-2">
+
+              <button type="button" class="btn btn-default"  onclick=logout()>Logout</button>
+              
+            </div>
+
+
+  </div>
+</div>
+
+			
+
+		<body>				
+
+		
+           
+          <div class="container">
+            <div class="row2">
+              <div class="col-md-2 visit">
+
+                
+
+                <p>Available online</p>
+                <div id="nameDiv"></div>
+
+
+              </div>
+
+             
+              <div class="col-md-10">
+
+                
+
+                  <div id='messagesDiv' class="messages">
+                <input type='text' id='messageInput' class="inputbox" placeholder='Chat here'>
+                </div> 
+              </div>
+
+            </div>
+          </div>
+
+                <div class="row">
+
+            <a href="https://sis.cbu.ca/students/">
+            <div class="col-md-4">    
+              <img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSqjwZjnDHKtD5I7otIbM-RW_c1NPcU2R_rYmmUUmJXu8wKuiawuQ2eJmQ" alt="upload assingment" height="80" width="80">
+            </a>
+            </div>
+
+            <a href="https://sis.cbu.ca/students/">
+            <div class="col-md-4">
+                <img src="http://media.idownloadblog.com/wp-content/uploads/2013/11/iTunes-U-1.4-for-iOS-app-icon-small.png" alt="view courses" height="80" width="80">     
+
+                </a>  
+          
+            </div>
+
+            <a href="https://sis.cbu.ca/students/">
+            <div class="col-md-4">
+                <img src="http://a1.mzstatic.com/us/r30/Purple6/v4/a7/98/bc/a798bc27-8352-6596-fc89-0a5877789dc1/icon_256.png" height="80" width="80">
+              </a>
+            </div>
+      
+          </div>  
+
+         
+             <div id="footer">
+                      
+                        <div class="row10">
+                              
+                                <a href="https://twitter.com/cbuniversity" title="Twitter"><i class="icon-twitter"></i></a>
+              
+                              
+                                <a href="https://www.facebook.com/CapeBretonUniversity" title="Facebook"><i class="fa fa-facebook-square fa-4x"></i></a>
+              
+                              
+                               <a href="https://instagram.com/capebretonuniversity/" title="Instagram"><i class="fa fa-instagram fa-4x"></i></a>
+              
+                              
+                              <a href="https://www.linkedin.com/edu/school?id=10832&amp;trk=tyah&amp;trkInfo=tarId%3A1409148669911%2Ctas%3Acape%20breton%20university%2Cidx%3A3-1-4" title="LinkedIn"><i class="fa fa-linkedin-square fa-4x"></i></a>
+                       </div>                
+              </div>
+
+
+  				<div class="modal fade" id="auth-modal">
+ 				 <div class="modal-dialog">
+    				<div class="modal-content">
+      				<div class="modal-header">
+       					 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+       						 <h4 class="modal-title text-center">Authentication</h4>
+     			 		</div>
+     					<div class="modal-body">
+     						 <div class="row4">
+     						 	<div>
+   						 			<div class="col-md-6">
+                      <a id="twitter-signin" href="javascript:login('twitter');">
+                        <i id="twitter-signin-btn" class="fa fa-twitter fa-3x"></i>
+                      </a>
+                    </div>
+   						 				
+   						 			<div class="col-md-6">
+                      <a id="facebook-signin" href="javascript:login('facebook');">
+                        <i id="facebook-signin-btn" class="fa fa-facebook-official fa-3x"></i>
+                      </a>
+                    </div>
+   						 				
+   						 			
+   						 		</div>
+        						
+  							</div>
+              </div>
+
+        			<div class="modal-footer">
+         			 	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         				 <button type="button" class="btn btn-default">Save changes</button>
+       			  </div>
+
+    				</div><!-- /.modal-content -->
+ 				</div><!-- /.modal-dialog -->
+				</div><!-- /.modal -->
+      <!-- </div> -->
+
+
+       
+
+				<script>
+
+      				var myDataRef = new Firebase('https://cbuco.firebaseio.com/');
+      				var name="";
+      				var authModal= $('#auth-modal').modal({show:false});
+
+
+      				// Create a callback which logs the current auth state
+
+              var authData=myDataRef.getAuth();
+
+              if  (authData){
+                var userId = authData.uid;
+                  name = authData[authData.provider].displayName;
+                  console.log("user is already logged in");
+
+              }
+
+
+
+    function login(provider){
+
+      console.log("Login with", provider);
+      authModal.modal ('hide');
+
+
+      myDataRef.authWithOAuthPopup(provider, function(error, authData) {
+        if (error) {
+          console.log("Login Failed!", error);
+        } else {
+          console.log("Authenticated successfully with payload:", authData);
+          //console.log("User " + authData.uid + " is logged in with " + authData.provider);
+          var userId = authData.uid;
+          name = authData[authData.provider].displayName;
+          myDataRef.child('user').child(userId).once("value", function(snapshot){
+            var ifExists = snapshot.exists();
+            if (ifExists){
+              console.log('Already a user');
+            } else {
+              myDataRef.child('user').child(userId).push({id: userId, name:name}); 
+            }
+
+          })
+
+        }
+      });
+
+      // myDataRef.authWithOAuthPopup("facebook", function(error, authData) {
+      //   if (error) {
+      //     console.log("Login Failed!", error);
+      //   } else {
+      //     console.log("Authenticated successfully with payload:", authData);
+      //   }
+      // });
+    }
+
+                myDataRef.child('user').on('value', function(snapshot){
+
+                  var allNames = snapshot.val();
+                  //console.log(allNames);
+
+                  for (var u in allNames){
+                    for (var i in allNames[u]){
+
+                      console.log(allNames[u][i].name);
+                      displayNamesUser(allNames[u][i].name)
+
+                    }
+
+
+                    
+                    
+                  }
+                })
+
+                function displayNamesUser(username){
+                  $('<div/>').text(username).appendTo($('#nameDiv'));
+
+                }
+      					$('#messageInput').keypress(function (e) {
+        					if (e.keyCode == 13) {
+        						if(!name){
+        							authModal.modal('show');
+        						}else{
+                      //var name = $('#nameInput').val();
+                var text = $('#messageInput').val();
+                  myDataRef.child('messages').push({name: name, text: text});
+                 $('#messageInput').val('');
+
+                    }
+         				
+       											 }
+     													 });
+
+
+
+      					function logout(){
+      						console.log("logging out");
+      						myDataRef.unauth();
+      						location.reload();
+      					}
+    
+    				 	 myDataRef.child('messages').on('child_added', function(snapshot) {
+        				var message = snapshot.val();
+                //console.log(message);
+       					 displayChatMessage(message.name, message.text);
+     													 });
+     	
+     					 function displayChatMessage(name, text) {
+        					$('<div/>').text(text).prepend($('<em/>').text(name+': ')).appendTo($('#messagesDiv'));
+       							 $('#messagesDiv')[0].scrollTop = $('#messagesDiv')[0].scrollHeight;
+     															 };
+    
+    			</script>
+
+              
+
+               
+  			
+
+		</body>
+
+</html>
+
+
+
+
+     
+
+
+					
+
+
+
+
